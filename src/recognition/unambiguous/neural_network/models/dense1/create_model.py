@@ -1,19 +1,15 @@
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.models import Model
+from keras.layers import Dense, Dropout, Input
 
 
 def create_model(input_dim, output_dim):
-    model = Sequential()
-    model.add(Dense(16, input_dim=input_dim, activation='relu'))
-    model.add(Dropout(0.05))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dropout(0.1))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dropout(0.1))
-    model.add(Dense(16, activation='relu'))
-    model.add(Dropout(0.05))
-    model.add(Dense(output_dim, activation='softmax'))
+    input_layer = Input(shape=(input_dim, ))
 
-    return model
+    x = Dense(10, activation='relu', kernel_initializer='he_uniform')(input_layer)
+    x = Dropout(0.05)(x)  # 0.2
+    x = Dense(10, activation='relu', kernel_initializer='he_uniform')(x)
+    x = Dropout(0.05)(x)  # 0.2
+
+    output_layer = Dense(output_dim, activation='softmax')(x)
+
+    return Model(inputs=input_layer, outputs=output_layer)
