@@ -5,7 +5,7 @@ import tensorflow as tf
 from sklearn.preprocessing import LabelEncoder, StandardScaler, Normalizer
 from keras.utils.np_utils import to_categorical
 
-from src.recognition.unambiguous.neural_network.models import dense1, dense2
+from src.recognition.unambiguous.neural_network.models import build_2layers_nn, build_7layers_nn
 
 
 def prepare_x(x_array, standard_scaler):
@@ -37,9 +37,7 @@ if __name__ == '__main__':
     X_test, y_test = prepare_data(test_values, test.scheme, ss, le)
 
     print('############ Creating model ############')
-    model = dense1.create_model(10, len(le.classes_))
-    opt = tf.keras.optimizers.Adam(learning_rate=0.005)
-    model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+    model = build_2layers_nn(10, len(le.classes_))
     model.fit(X_train, y_train, epochs=10, batch_size=32)
     model.save('models/last_model')  # TODO: save in directory
 
