@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
+import tensorflow as tf
 
 from sklearn.preprocessing import LabelEncoder, StandardScaler, Normalizer
 from keras.utils.np_utils import to_categorical
 
-from recognition.unambiguous.neural_network.models import dense1, dense2
+from src.recognition.unambiguous.neural_network.models import build_2layers_nn, build_7layers_nn
 
 
 def prepare_x(x_array, scaler):
@@ -38,19 +39,18 @@ if __name__ == '__main__':
     X_test, y_test = prepare_data(test_values, test.scheme, ss, le)
 
     print('############ Creating model ############')
-    model = dense1.create_model(10, len(le.classes_))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(X_train, y_train, epochs=10, batch_size=10, validation_split=0.2)
+    model = build_2layers_nn(10, len(le.classes_))
+    model.fit(X_train, y_train, epochs=10, batch_size=32)
     model.save('models/last_model')  # TODO: save in directory
 
     print('############ Evaluating model ############')
     results = model.evaluate(X_test, y_test)
 
     print('############ My tests ############')
-    my_tests = prepare_x(np.array([[5, 6, 7, 12, 35, 33, 37, 30, 99, 108],
-                                   [5, 6, 7, 12, 35, 33, 37, 88, 99, 108],
-                                   [5, 6, 7, 33, 35, 33, 37, 88, 99, 108],
-                                   [5, 6, 7, 46, 50, 62, 65, 66, 99, 108]]),
+    my_tests = prepare_x(np.array([[5, 6, 7, 12, 35, 33, 37, 39, 99, 108],  # 4 4 2
+                                   [5, 6, 7, 12, 35, 33, 37, 88, 99, 108],  # 4 3 3
+                                   [5, 6, 7, 33, 35, 33, 37, 88, 99, 108],  # 3 4 3
+                                   [5, 6, 7, 46, 50, 62, 65, 66, 99, 108]]),  # 3 5 2
                          ss)
 
     pr = model.predict(my_tests)
