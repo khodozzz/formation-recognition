@@ -1,7 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 
-from data_generation.positions import *
+from data_generation.scheme import *
 
 
 def create_dataset(schemes, count, name):
