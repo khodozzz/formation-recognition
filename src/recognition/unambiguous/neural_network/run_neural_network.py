@@ -7,9 +7,11 @@ from keras.utils.np_utils import to_categorical
 from recognition.unambiguous.neural_network.models import dense1, dense2
 
 
-def prepare_x(x_array, standard_scaler):
+def prepare_x(x_array, scaler):
     x_array.sort(axis=1)
-    return standard_scaler.transform(x_array)
+    if scaler is None:
+        return x_array
+    return scaler.transform(x_array)
 
 
 def prepare_y(y_array, label_encoder):
