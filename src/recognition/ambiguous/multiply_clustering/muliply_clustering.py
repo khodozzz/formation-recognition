@@ -18,9 +18,9 @@ class MultiplyClusteringChangingParam:
         self.Y = None
         self.labels_ = None
 
-    def fit(self, X, verbose=True, plot_heatmap=True, plot_name=None):
+    def fit(self, X, verbose=True):
         self._calc_Y(X, verbose)
-        self._calc_heatmap(plot_heatmap, plot_name)
+        self._calc_heatmap()
         self._calc_labels()
 
     def _calc_Y(self, X, verbose):
@@ -43,7 +43,7 @@ class MultiplyClusteringChangingParam:
             if max(clust) != 9 and max(clust) != 0:  # add all label vectors exсept [0 ... 9] and [0 ... 0]
                 self.Y.append(clust)
 
-    def _calc_heatmap(self, plot_heatmap, plot_name):
+    def _calc_heatmap(self):
         arr_size = len(self.Y[0])
 
         self.hmap_ = np.ones((arr_size, arr_size))
@@ -58,12 +58,6 @@ class MultiplyClusteringChangingParam:
                         k += 1
 
                 self.hmap_[p1][p2] = self.hmap_[p2][p1] = k / len(self.Y)
-
-        if plot_heatmap:
-            sns.set_theme()
-            sns.heatmap(self.hmap_, cmap=sns.color_palette("Blues", as_cmap=True))
-            plt.title(plot_name)
-            plt.show()
 
     def _calc_labels(self):
         arr_size = len(self.Y[0])
@@ -82,6 +76,13 @@ class MultiplyClusteringChangingParam:
             counter += 1
 
 
+def plot_heatmap(hmap, plot_name):
+    sns.set_theme()
+    sns.heatmap(hmap, cmap=sns.color_palette("Blues", as_cmap=True))
+    plt.title(plot_name)
+    plt.show()
+
+
 if __name__ == '__main__':
     my_test = [15, 16, 17, 33, 35, 43, 44, 51, 55, 56]
 
@@ -91,8 +92,11 @@ if __name__ == '__main__':
 
     for method in method_param:
         m_name = str(method).split('(')[0]
-        print(m_name)
 
         clus = MultiplyClusteringChangingParam(method, method_param[method])
-        clus.fit(my_test, plot_name=m_name)
+        clus.fit(my_test)
+
+        plot_heatmap(clus.hmap_, m_name)
+
+        print(m_name)
         print('#', clus.labels_, '#')
