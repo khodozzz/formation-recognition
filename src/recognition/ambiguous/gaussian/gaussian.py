@@ -1,7 +1,9 @@
-from data_generation.create_series_dataset import *
+import seaborn as sns
 from scipy.integrate import *
 from scipy import stats
 from itertools import *
+
+from data_generation.create_series_dataset import *
 
 
 class GaussianRecognition:
@@ -15,12 +17,14 @@ class GaussianRecognition:
         self.lines_ = None
         self.big_lines_ = None
         self.min_unions_ = None
+        self.hmap_ = None
 
     def fit(self, X):
         self.X = X
         self._calc_x_space()
         self._calc_distributions()
         self._calc_lines_probs()
+        self._calc_heatmap()
         self._define_lines()
         self._define_big_lines()
 
@@ -51,6 +55,13 @@ class GaussianRecognition:
             self.probs_[comb] = simpson(x=self.x_space_, y=min_union)
             self.min_unions_[comb] = min_union
 
+    def _calc_heatmap(self):
+        self.hmap_ = [[1 if i == j else
+                       self.probs_[(i, j)] if i < j and (i, j) in self.probs_ else
+                       self.probs_[(j, i)] if i > j and (j, i) in self.probs_ else
+                       0
+                       for i in range(10)] for j in range(10)]
+
     def _define_lines(self):
         self.lines_ = []
         for comb in self.probs_:
@@ -78,8 +89,17 @@ class GaussianRecognition:
 
 
 def plot_distributions(x_space, distributions):
+    plt.title(f'Distributions')
+    ax = plt.gca()
+    ax.set_ylim([0, max([max(d) for d in distributions])])
     for d in distributions:
         plt.plot(x_space, d)
+    plt.show()
+
+
+def plot_heatmap(hmap):
+    sns.set_theme()
+    sns.heatmap(hmap, cmap=sns.color_palette("Blues", as_cmap=True))
     plt.show()
 
 
@@ -104,3 +124,5 @@ if __name__ == '__main__':
     for line in rec.big_lines_:
         print(f'{line} : {rec.probs_[line]}')
         plot_min_union(line, rec.x_space_, rec.min_unions_, rec.distributions_)
+
+    plot_heatmap(rec.hmap_)

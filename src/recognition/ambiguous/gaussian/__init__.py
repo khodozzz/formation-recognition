@@ -1,1 +1,1 @@
-from recognition.ambiguous.gaussian.gaussian import GaussianRecognition
+from recognition.ambiguous.gaussian.gaussian import GaussianRecognition, plot_distributions

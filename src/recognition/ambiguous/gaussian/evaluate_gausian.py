@@ -11,7 +11,7 @@ def cluster_to_str(clusters):
 
 
 if __name__ == '__main__':
-    test = pd.read_csv('../../../../data/series_test.csv')
+    test = pd.read_csv('../../../../data/23_schemes/test.csv')  # TODO: series data to evaluate
 
     X = test.values[:100, :-1].astype(float)
     y = test.scheme[:100]
